@@ -1,4 +1,3 @@
-from sys import dont_write_bytecode
 from openpyxl import load_workbook
 from openpyxl import Workbook
 
