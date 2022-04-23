@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 from openpyxl import Workbook
+from function import getBasicData,printCol_1,printTable
 
 #读取abtest原表格
 originWB=load_workbook(filename='origin.xlsx')
@@ -8,18 +9,10 @@ sheet1=originWB['Sheet1']
 doneWB=Workbook()
 ws=doneWB.active
 ws.title="数据结果"
+#获取确定取数的时间段&实验组别
+testNum,test,dateNum,date=getBasicData(sheet1)
 
-#groupNum存储实验+对照的组数
-#groupNum=int(input('你的AB实验数据有几组:'))
-group=['A','B','C','D','E','F','G','H']
-for item in sheet1.rows:
-        print(item)  # 按照行输出
-        print(item[0].value)  # 输出单元格的值
-        item[0].value = 1
-# 输出修改后的值，注意不保存文件，数据不会存储
-for item in ws.rows:
-    print(item[0].value)  # 输出单元格的值
+printCol_1(ws,date)     #写入第一列（日期列）
+printTable(ws,sheet1,date,test)  #写入'弹幕模块'UV结果
 
-#doneWB.save("example.xlsx")
-
-
+doneWB.save("example.xlsx")
