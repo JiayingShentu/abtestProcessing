@@ -3,6 +3,7 @@ from openpyxl import load_workbook
 from openpyxl import Workbook
 import pandas as pd
 from function import getBasicData,printCol_1,printTable
+from function import title,type1,type2
 
 #读取abtest原表格
 originData=pd.read_excel(io='./origin.xlsx')
@@ -16,7 +17,8 @@ ws.title="数据结果"
 test,date=getBasicData(originData)
 
 printCol_1(ws,date)     #写入第一列（日期列）
-printTable(ws,oD,date,test,'弹幕模块UV')  #写入'弹幕模块UV'结果
+for item in title:
+    printTable(ws,oD,date,test,item)  
 
 
 
