@@ -1,4 +1,7 @@
 #实验组别对照的字母
+from turtle import begin_fill, position
+
+
 group=['A','B','C','D','E','F','G','H']
 
 #行对照的字段
@@ -11,42 +14,47 @@ title=['时间-天','AB','弹幕模块UV','弹幕开启UV','弹幕开启率','�
 #该函数确定取数的时间段&天数
 def getBasicData(sheet):
     dateNum=1   # 取了dateNum天的数
-    testNum=1   # 实验共testNum组
+    testNum=0   # 实验共testNum组
     date=[]     # 取数的时间段
     test=[]     # 组别名称
-    colA=sheet['A']
-    colB=sheet['B']
+    colA=sheet[title[0]]
+    colB=sheet[title[1]]
     tmp=''  
     #testNum计算 
-    for cell in colA:
-        if cell.value==title[0]:
-            print('yes')
-        if cell.value!=title[0] and tmp!=title[0]:
-            if tmp==cell.value:
-                testNum=testNum+1
-            else:
-                break
-        tmp=cell.value
+    for item in colA:
+        if tmp==item or tmp=='':
+            testNum=testNum+1
+        else:
+            break
+        tmp=item
     #test确定
-    tmp=colB[1].value[:-1]
+    tmp=colB[1][:-1]
     for i in range(testNum):
         test.append(tmp+group[i])   
     #dateNum计算
-    dateNum=int((sheet.max_row-1)/testNum)
+    dateNum=int((len(sheet))/testNum)
     #date确定
     for i in range(dateNum):
-        date.append(colA[1+testNum*i].value)
-    return testNum,test,dateNum,date
-
+        date.append(colA[testNum*i])
+    return test,date
+       
 #该函数写入第一列（日期列）
 def printCol_1(sheet,date):
-    sheet['A1']=title[0]
+    sheet['A2']=title[0]
     for i in range(len(date)):
-        sheet['A'+str(i+2)]=date[i]
+        sheet['A'+str(i+3)]=date[i]
 
 #该函数写入后续数据
-def printTable(sheet,sheet1,date,test):
-    data=[]
-    for r in range(1,sheet1.max_row):
-        if(sheet1['A'+str(r+1)]==date[0])
+def printTable(sheet,df,date,test,colName):
+    if colName=='弹幕模块':
+        position=sheet.max_column
+    else:
+        position=sheet.max_column+1
+    
+    for i in range(len(test)):
+        sheet.cell(row=2,column=position+i+1).value=test[i]
+        for j in range(len(date)):
+            sheet.cell(row=j+3,column=position+i+1).value=df.at[(date[j],test[i]),'弹幕模块UV']
+
+            
 
