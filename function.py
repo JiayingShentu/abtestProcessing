@@ -1,5 +1,6 @@
 import string
-from turtle import begin_fill, position
+from turtle import begin_fill, color, position
+from openpyxl.styles import  PatternFill
 
 #实验组别对照的字母
 group=['A','B','C','D','E','F','G','H']
@@ -56,13 +57,13 @@ def printTable(sheet,df,date,test,colName):
         position=sheet.max_column
     else:
         position=sheet.max_column+1
+    
     #不需要分别与AB组对比的情况
     if colName in type1:
         easyMode(sheet,df,date,test,colName,position)
     #需要分别与AB组对比的情况
     if colName in type2:
-        hardMode(sheet,df,date,test,colName,position)
-        
+        hardMode(sheet,df,date,test,colName,position)              
 
 
 def easyMode(sheet,df,date,test,colName,position):
@@ -70,48 +71,60 @@ def easyMode(sheet,df,date,test,colName,position):
     for i in range(len(test)):
         sheet.cell(row=2,column=position+i+1).value=test[i]
         for j in range(len(date)):
-            sheet.cell(row=j+3,column=position+i+1).value=df.at[(date[j],test[i]),colName]
+            sheet.cell(row=j+3,column=position+i+1).value=str(df.at[(date[j],test[i]),colName])
 
 def hardMode(sheet,df,date,test,colName,position):
     sheet.cell(row=1,column=position+1).value=colName
     #写入对照组A组
     sheet.cell(row=2,column=position+1).value=test[0]
     for j in range(len(date)):
-        aCellValue=df.at[(date[j],test[0]),colName]
-        sheet.cell(row=j+3,column=position+1).value=aCellValue
+        sheet.cell(row=j+3,column=position+1).value=str(df.at[(date[j],test[0]),colName])
     #写入实验组&对比数据
     for i in range(len(test)-2):
         sheet.cell(row=2,column=position+2+i).value=test[i+2]
         for j in range(len(date)):
-            cellValue=df.at[(date[j],test[i+2]),colName]
+            aCellValue=str(df.at[(date[j],test[0]),colName])
+            cellValue=str(df.at[(date[j],test[i+2]),colName])
             sheet.cell(row=j+3,column=position+2+i).value=cellValue
-            compare=dataCompare(aCellValue,cellValue)
-            sheet.cell(row=len(date)+3+8+j,column=position+2+i).value=compare
+            compare,cellColor=dataCompare(aCellValue,cellValue)
+            cellNow=sheet.cell(row=len(date)+3+8+j,column=position+2+i)
+            cellNow.value=compare
+            cellNow.fill=PatternFill("solid", fgColor=cellColor)
     #重置position位置
     position=position+len(test)
     #写入对照组B组
     sheet.cell(row=2,column=position+1).value=test[1]
     for j in range(len(date)):
-        bCellValue=df.at[(date[j],test[1]),colName]
-        sheet.cell(row=j+3,column=position+1).value=bCellValue
+        sheet.cell(row=j+3,column=position+1).value=str(df.at[(date[j],test[1]),colName])
     #写入实验组
     for i in range(len(test)-2):
         sheet.cell(row=2,column=position+2+i).value=test[i+2]
         for j in range(len(date)):
-            cellValue=df.at[(date[j],test[i+2]),colName]
+            bCellValue=str(df.at[(date[j],test[1]),colName])
+            cellValue=str(df.at[(date[j],test[i+2]),colName])
             sheet.cell(row=j+3,column=position+2+i).value=cellValue
-            compare=dataCompare(bCellValue,cellValue)
-            sheet.cell(row=len(date)+3+8+j,column=position+2+i).value=compare
+            compare,cellColor=dataCompare(bCellValue,cellValue)
+            cellNow=sheet.cell(row=len(date)+3+8+j,column=position+2+i)
+            cellNow.value=compare
+            cellNow.fill=PatternFill("solid", fgColor=cellColor)
 
 
 def dataCompare(str1,str2):
-    if type(str1)==str:
-        if str1[-1]=='%':
-            result=float(str2.strip('%'))-float(str1.strip('%'))
-            print (str2,'-',str1,'=',str(round(result,2))+'%')
-            return str(round(result,2))+'%'
-    result=float(str2)-float(str1)
-    return str(round(result))
+    if str1[-1]=='%':
+        predata=float(str2.strip('%'))-float(str1.strip('%'))
+        result=str(round(predata,2))+'%'
+        if result[0]=='-':
+            cellColor='FFF0FFF0'
+        else:
+            cellColor='FFFFF5EE'
+        return result,cellColor
+    predata=float(str2)-float(str1)
+    result=str(round(predata,4))
+    if result[0]=='-':
+        cellColor='FFF0FFF0'
+    else:
+        cellColor='FFFFF5EE'
+    return result,cellColor
 
         
 
