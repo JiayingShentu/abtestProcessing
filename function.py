@@ -1,12 +1,10 @@
-import string
-from turtle import begin_fill, color, position
 from openpyxl.styles import  PatternFill
 from openpyxl.styles import Border,Side,colors
 
 #实验组别对照的字母
 group=['A','B','C','D','E','F','G','H','I','J','K']
 
-#行对照的字段
+#所有字段（指标）
 title=['时间-天','AB','弹幕模块UV','弹幕开启UV','弹幕开启率','弹幕默认开启UV','弹幕默认开启率',
 '弹幕手动开启UV','弹幕手动开启率','弹幕默认关闭UV','弹幕默认关闭率','弹幕手动关闭UV','弹幕手动关闭率',
 '精简模式UV','精简模式开启率','默认精简模式UV','默认精简开启率','手动精简模式UV','手动精简开启率',
@@ -16,7 +14,7 @@ title=['时间-天','AB','弹幕模块UV','弹幕开启UV','弹幕开启率','�
 type1=['弹幕模块UV','弹幕开启UV','弹幕默认开启UV','弹幕手动开启UV','弹幕默认关闭UV','弹幕手动关闭UV',
     '精简模式UV','默认精简模式UV','手动精简模式UV','弹幕发送UV','弹幕发送PV','弹幕点赞UV','弹幕点赞PV',
     '弹幕点踩UV','弹幕点踩PV']
-#需要额外处理的字段
+#需要额外处理的字段,这些参数需要更加细化的定量比较
 type2=['弹幕开启率','弹幕默认开启率','弹幕手动开启率','弹幕默认关闭率','弹幕手动关闭率','精简模式开启率',
 '默认精简开启率','手动精简开启率','弹幕发送量/弹幕模块UV','人均弹幕发送量','弹幕点赞量/弹幕模块UV',
 '人均弹幕点赞量','弹幕点踩量/弹幕模块UV','人均点踩量','弹幕点赞比例','弹幕发布比例']
@@ -54,8 +52,8 @@ def getBasicData(sheet,index):
     return test,date
        
 #该函数写入第一列（日期列）
-def printCol_1(sheet,date):
-    sheet['A2']=title[0]
+def printCol_1(sheet,date,col_1):
+    sheet['A2']=col_1
     for i in range(len(date)):
         sheet['A'+str(i+3)]=date[i]
 
